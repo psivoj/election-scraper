@@ -7,6 +7,7 @@ discord: magdalena2586
 """
 
 import argparse
+import csv
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -39,6 +40,7 @@ def main():
         location = city_row.select_one(".overflow_name")
         if code is None or location is None:
             continue
+        print(f"Loading results for {location.text}")
         city_row = {
             "code": code.text,
             "location": location.text
@@ -48,9 +50,21 @@ def main():
         city_results = parse_city(city_href)
         city_row.update(city_results)
         results.append(city_row)
-        if len(parties.keys()) == 0:
-            print("Extracting parties")
-            parties = city_results["parties"].keys()
+        if len(parties) == 0:
+            print("Extracting parties from the first full result")
+            parties = list(city_results["parties"].keys())
+
+    print(f"Writing loaded results to {args.outfile}")
+    file = open(args.outfile, mode="w")
+    headers = ["code", "location", "registered", "envelopes", "valid"] + parties
+    writer = csv.DictWriter(file, fieldnames=headers, delimiter=";", lineterminator="\n")
+    writer.writeheader()
+    for row in results:
+        row.update(row["parties"])
+        del row["parties"]
+        writer.writerow(row)
+    file.close()
+    print("All done successfully!")
 
 
 def select_to_int(html, selector):
@@ -71,14 +85,14 @@ def parse_city(url):
 
     party_results = city_parsed.select("div.t2_470 tr")
     for party_result in party_results:
-        party = party_result.select_one('td[headers="t1sa1 t1sb2"]')
+        party = party_result.select_one('td[headers="t1sa1 t1sb2"],td[headers="t2sa1 t2sb2"]')
         if party is None:
             continue
-        city_results["parties"][party.text] = select_to_int(party_result, 'td[headers="t1sa2 t1sb3"]')
+        city_results["parties"][party.text] = select_to_int(party_result,
+                                                            'td[headers="t1sa2 t1sb3"],td[headers="t2sa2 t2sb3"]')
 
     return city_results
 
 
 if __name__ == '__main__':
     main()
-
