@@ -1,16 +1,30 @@
-# This is a sample Python script.
+"""
+Projekt 3 - election scraper
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+author: Magdalena Slánská
+email: magdalena@slansti.cz
+discord: magdalena2586
+"""
+
+import argparse
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def main():
+    parser = argparse.ArgumentParser(description="Election parser")
+    parser.add_argument("url", help="The URL on the VOLBY.CZ portal for scraping")
+    parser.add_argument("outfile", help="The output file to export data")
+
+    args = parser.parse_args()
+    if not args.url or not args.outfile:
+        parser.print_help()
+        print("Error: Two parameters are required")
+        quit()
+
+    print(f"URL: {args.url}")
+    print(f"Outfile: {args.outfile}")
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    main()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
