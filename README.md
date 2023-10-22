@@ -20,6 +20,7 @@ Example:
 Referendums](https://www.volby.cz) and copy the URL of the page.
 
 Example: https://volby.cz/pls/ps2017nss/ps32?xjazyk=EN&xkraj=9&xnumnuts=5302
+
 2. Run the scraping script:
 
 Example: `python main.py "https://volby.cz/pls/ps2017nss/ps32?xjazyk=EN&xkraj=9&xnumnuts=5302" results_pardubice.csv`
